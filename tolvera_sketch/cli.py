@@ -73,7 +73,7 @@ if __name__ == "__main__":
             sketch_path = os.path.join(SKETCH_DIR, sketch_file)
             subprocess.run(["python", sketch_path], check=True)
         except (IndexError, ValueError):
-            print("Invalid choice. Exiting.")
+            print("Invalid input. Exiting.")
         except subprocess.CalledProcessError as e:
             print(f"Error running {sketch_file}: {e}")
 
@@ -94,13 +94,12 @@ if __name__ == "__main__":
 SKETCH_DIR_NAME = "sketches"
 @app.command()
 def list_sketches(sketchbook_path):
-    """List all Python sketches in the sketches directory, sorted by name."""
+    """List all Python sketches in the sketches folder, sorted by name."""
     sketches_path = os.path.join(sketchbook_path, SKETCH_DIR_NAME)
     print(sketches_path)
     if not os.path.exists(sketches_path):
         return []
     typer.echo(sorted([f for f in os.listdir(sketches_path) if f.endswith(".py")]))
-
 
 
 if __name__ == "__main__":
