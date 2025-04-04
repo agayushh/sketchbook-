@@ -50,7 +50,7 @@ readme = "README.md"
 packages = []
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.11,<3.13"
 
 [tool.poetry.dev-dependencies]
 black = "^23.3.0"
@@ -77,33 +77,46 @@ build-backend = "poetry.core.masonry.api"
             main_py_path = sketchbook_path / "main.py"
             with open(main_py_path, "w") as f:
                 f.write(
-                    """import os
+                   """import os
 import subprocess
+import shlex
 
 SKETCH_DIR = "sketches"
 
 def list_sketches():
-    return [f for f in os.listdir(SKETCH_DIR) if f.endswith(".py")]
+    return sorted([f for f in os.listdir(SKETCH_DIR) if f.endswith(".py")])
 
 if __name__ == "__main__":
     sketches = list_sketches()
+    
     if not sketches:
-        print("No sketches found in the 'sketches/' folder.")
+        print("No such sketch found in the 'sketches/' folder.")
     else:
         print("Available Sketches:")
         for idx, sketch in enumerate(sketches, 1):
             print(f"{idx}. {sketch}")
         
-        choice = input("Enter the sketch number to run: ")
+        choice = input("Enter the sketch number to run: ").strip()
+
         try:
             sketch_file = sketches[int(choice) - 1]
             sketch_path = os.path.join(SKETCH_DIR, sketch_file)
-            subprocess.run(["python", sketch_path], check=True)
+            
+            # Accept arguments from user
+            args = input("Enter arguments (space-separated, or leave blank for none): ").strip()
+            arg_list = shlex.split(args) if args else []
+
+            # Construct the command
+            command = ["python", sketch_path] + arg_list
+            print(f"[DEBUG] Running command: {' '.join(command)}")  # Debugging output
+
+            # Execute the command
+            subprocess.run(command, check=True)
+
         except (IndexError, ValueError):
             print("Invalid input. Exiting.")
         except subprocess.CalledProcessError as e:
             print(f"Error running {sketch_file}: {e}")
-
 """
                 )
 
