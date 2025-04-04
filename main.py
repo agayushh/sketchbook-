@@ -9,6 +9,7 @@ def tolvera_sketch():
     """Entry point for tolvera_sketch."""
     pass
 
+
 app.add_typer(sketchbook)
 
 if __name__ == "__main__":

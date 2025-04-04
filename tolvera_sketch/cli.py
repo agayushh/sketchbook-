@@ -6,6 +6,7 @@ import os
 
 app = typer.Typer()
 
+
 @app.command()
 def init(
     name: str = typer.Argument(..., help="Name of the sketchbook folder"),
@@ -22,11 +23,11 @@ def init(
     """
     Create a new sketchbook folder with optional templates.
     """
-    
-    #if path is not given use current working directory
+
+    # if path is not given use current working directory
     if path is None:
         path = Path.cwd()
-    
+
     sketchbook_path = path / name
 
     try:
@@ -38,14 +39,40 @@ def init(
             (sketchbook_path / "README.md").touch()
             (sketchbook_path / "pyproject.toml").touch()
 
+            pyproject_path = sketchbook_path / "pyproject.toml"
+            with open(pyproject_path, "w") as f:
+                f.write(
+f"""[tool.poetry]
+name = "{name.lower().replace(' ', '-')}"
+version = "0.1.0"
+description = "A tolvera sketchbook"
+readme = "README.md"
+packages = []
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.dev-dependencies]
+black = "^23.3.0"
+isort = "^5.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+"""
+)
+
             readme_path = sketchbook_path / "README.md"
             with open(readme_path, "w") as f:
-                f.write(f"# {name} Sketchbook\n\n")
+                f.write(f"# {name} Sketchbook\n")
                 f.write(f"Created on: {datetime.now().strftime('%Y-%m-%d')}\n")
                 f.write("## Structure\n")
-                f.write("- **sketches/**: Directory to store all your sketches within a sketchbook\n")
+                f.write(
+                    "- **sketches/**: Directory to store all your sketches within a sketchbook\n"
+                )
                 f.write("- **main.py**: Entry point for the sketchbook\n")
-
+                f.write("- **pyproject.toml**: Manages dependencies among sketches\n")
 
             main_py_path = sketchbook_path / "main.py"
             with open(main_py_path, "w") as f:
@@ -91,7 +118,10 @@ if __name__ == "__main__":
         typer.echo(f"Error creating sketchbook: {str(e)}", err=True)
         raise typer.Exit(code=1)
 
+
 SKETCH_DIR_NAME = "sketches"
+
+
 @app.command()
 def list_sketches(sketchbook_path):
     """List all Python sketches in the sketches folder, sorted by name."""
