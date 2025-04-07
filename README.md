@@ -4,4 +4,5 @@ A Python library for creating sketches using taichi.
 
 
 
-[Demo Video](https://github.com/user-attachments/assets/d5c9682e-9321-437d-b156-140ffa3fa117)
+
+[sketchbookCLI.webm](https://github.com/user-attachments/assets/f5f133a4-a13e-4e09-9922-33d17c7d6109)
